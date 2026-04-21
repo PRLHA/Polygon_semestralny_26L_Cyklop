@@ -1,0 +1,139 @@
+[gd_scene format=3 uid="uid://yrfbwlfxjyb6"]
+
+[ext_resource type="Script" uid="uid://c1x48b6mka1ko" path="res://scripts/raycast_vehicle.gd" id="1_e62bf"]
+[ext_resource type="Material" uid="uid://u14ruom0l5ym" path="res://test_mat.tres" id="2_50usc"]
+[ext_resource type="Texture2D" uid="uid://d1qfijr0su1od" path="res://front_texture.png" id="2_qd86y"]
+[ext_resource type="Script" uid="uid://8stv3a4k8gw" path="res://scripts/raycast_wheel.gd" id="3_b1ifb"]
+[ext_resource type="Material" uid="uid://dcbq4383bkr1n" path="res://flag.tres" id="5_tw3na"]
+
+[sub_resource type="Curve" id="Curve_tw3na"]
+_data = [Vector2(0, 0.3), 0.0, 0.0, 0, 0, Vector2(0.3, 0.90000004), 0.0, 0.0, 0, 0, Vector2(0.7, 0.8), 0.0, 0.0, 0, 0, Vector2(1, 0.1), 0.0, 0.0, 0, 0]
+point_count = 4
+metadata/_snap_enabled = true
+
+[sub_resource type="BoxMesh" id="BoxMesh_50usc"]
+size = Vector3(2.5, 0.525, 1.275)
+
+[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_e62bf"]
+points = PackedVector3Array(-1.25, -0.2625, -0.6375, -1.25, 0.2625, -0.6375, 1.25, -0.2625, -0.6375, -1.25, -0.2625, 0.6375, -1.25, 0.2625, 0.6375, 1.25, 0.2625, -0.6375, 1.25, -0.2625, 0.6375, 1.25, 0.2625, 0.6375)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_b1ifb"]
+albedo_texture = ExtResource("2_qd86y")
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_tw3na"]
+material = SubResource("StandardMaterial3D_b1ifb")
+size = Vector2(1, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_qd86y"]
+next_pass = ExtResource("2_50usc")
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_b1ifb"]
+material = SubResource("StandardMaterial3D_qd86y")
+top_radius = 0.4
+bottom_radius = 0.4
+height = 0.2
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_jfe1r"]
+lightmap_size_hint = Vector2i(12, 12)
+size = Vector2(1, 1)
+orientation = 2
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_yc3b8"]
+material = ExtResource("5_tw3na")
+flip_faces = true
+size = Vector2(1, 1)
+orientation = 2
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_tw3na"]
+top_radius = 0.05
+bottom_radius = 0.05
+height = 2.2
+
+[node name="BasicRaycastCar" type="RigidBody3D" unique_id=1175379008 node_paths=PackedStringArray("wheels")]
+mass = 500.0
+script = ExtResource("1_e62bf")
+wheels = [NodePath("WheelBL"), NodePath("WheelFL"), NodePath("WheelBR"), NodePath("WheelFR")]
+acceleration = 1000.0
+acceleration_curve = SubResource("Curve_tw3na")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=89707067]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2, 0)
+mesh = SubResource("BoxMesh_50usc")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=229349237]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2, 0)
+shape = SubResource("ConvexPolygonShape3D_e62bf")
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="." unique_id=345846676]
+transform = Transform3D(1.31134e-07, 0, -1, 0, 1, 0, 1, 0, 1.31134e-07, 0.371095, 0.485809, 0)
+mesh = SubResource("PlaneMesh_tw3na")
+
+[node name="WheelBL" type="RayCast3D" parent="." unique_id=1586050547]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, 0.8)
+enabled = false
+script = ExtResource("3_b1ifb")
+spring_strength = 5000.0
+spring_damping = 100.0
+rest_distance = 0.75
+over_extend = 0.2
+is_motor = true
+
+[node name="WheelMesh" type="MeshInstance3D" parent="WheelBL" unique_id=1047108512]
+transform = Transform3D(-1, -8.74228e-08, 3.82137e-15, 0, -4.37114e-08, -1, 8.74228e-08, -1, 4.37114e-08, 0, -0.5, 0)
+mesh = SubResource("CylinderMesh_b1ifb")
+
+[node name="WheelFL" type="RayCast3D" parent="." unique_id=1219873344]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0.8)
+enabled = false
+script = ExtResource("3_b1ifb")
+spring_strength = 5000.0
+spring_damping = 100.0
+rest_distance = 0.75
+over_extend = 0.2
+
+[node name="WheelMesh" type="MeshInstance3D" parent="WheelFL" unique_id=1235503591]
+transform = Transform3D(-1, -8.74228e-08, 3.82137e-15, 0, -4.37114e-08, -1, 8.74228e-08, -1, 4.37114e-08, 0, -0.5, 0)
+mesh = SubResource("CylinderMesh_b1ifb")
+skeleton = NodePath("../../WheelBL")
+
+[node name="WheelBR" type="RayCast3D" parent="." unique_id=621855955]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, -0.8)
+enabled = false
+script = ExtResource("3_b1ifb")
+spring_strength = 5000.0
+spring_damping = 100.0
+rest_distance = 0.75
+over_extend = 0.2
+is_motor = true
+
+[node name="WheelMesh" type="MeshInstance3D" parent="WheelBR" unique_id=1740775647]
+transform = Transform3D(1, 1.74846e-07, -7.64274e-15, 0, -4.37114e-08, -1, -1.74846e-07, 1, -4.37114e-08, 0, -0.5, 0)
+mesh = SubResource("CylinderMesh_b1ifb")
+skeleton = NodePath("../../WheelBL")
+
+[node name="WheelFR" type="RayCast3D" parent="." unique_id=238666486]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, -0.8)
+enabled = false
+script = ExtResource("3_b1ifb")
+spring_strength = 5000.0
+spring_damping = 100.0
+rest_distance = 0.75
+over_extend = 0.2
+
+[node name="WheelMesh" type="MeshInstance3D" parent="WheelFR" unique_id=751624562]
+transform = Transform3D(1, 1.74846e-07, -7.64274e-15, 0, -4.37114e-08, -1, -1.74846e-07, 1, -4.37114e-08, 0, -0.5, 0)
+mesh = SubResource("CylinderMesh_b1ifb")
+skeleton = NodePath("../../WheelBL")
+
+[node name="MeshInstance3D3" type="MeshInstance3D" parent="." unique_id=943518508]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 2, 0)
+material_override = ExtResource("5_tw3na")
+mesh = SubResource("PlaneMesh_jfe1r")
+
+[node name="MeshInstance3D4" type="MeshInstance3D" parent="." unique_id=1092328475]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 2, 0)
+mesh = SubResource("PlaneMesh_yc3b8")
+
+[node name="MeshInstance3D5" type="MeshInstance3D" parent="." unique_id=2034616330]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.45, 1.45, 0)
+mesh = SubResource("CylinderMesh_tw3na")

@@ -1,0 +1,7 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://dcbq4383bkr1n"]
+
+[ext_resource type="Texture2D" uid="uid://blrvpvilggp8p" path="res://sprites/icons/cyklop.png" id="1_kuxpf"]
+
+[resource]
+albedo_texture = ExtResource("1_kuxpf")
+albedo_texture_force_srgb = true

@@ -1,0 +1,8 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://u14ruom0l5ym"]
+
+[ext_resource type="Texture2D" uid="uid://cpvn7dpttiwn6" path="res://checkerboard_mat.png" id="1_ikxrv"]
+
+[resource]
+transparency = 1
+albedo_texture = ExtResource("1_ikxrv")
+albedo_texture_force_srgb = true
