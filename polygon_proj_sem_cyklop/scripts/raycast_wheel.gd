@@ -8,4 +8,6 @@ class_name RaycastWheel
 @export var wheel_radius : float = 0.4
 @export var is_motor : bool = false
 
-@onready var wheel_mesh : Node3D = get_child(0)
+@onready var wheel_position : Node3D = get_child(0)
+@export var offset_bone_id : int
+@export var rotation_bone_id : int

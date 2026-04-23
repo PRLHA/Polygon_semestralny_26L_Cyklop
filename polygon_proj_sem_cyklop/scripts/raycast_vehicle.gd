@@ -1,6 +1,7 @@
 extends RigidBody3D
 
 @export var wheels: Array[RaycastWheel]
+@onready var armature = $wheel_chassis/Armature/Skeleton3D
 @export var acceleration : float = 600.0
 @export var max_speed : float = 20.0
 
@@ -54,7 +55,11 @@ func _do_single_wheel_suspension(ray: RaycastWheel) -> void:
 		
 		var offset := ray.rest_distance - spring_len
 		
-		ray.wheel_mesh.position.y = -spring_len
+		ray.wheel_position.position.y = -spring_len
+		var bone : Transform3D = armature.global_transform * armature.get_bone_global_pose(ray.offset_bone_id)
+		bone = bone.translated_local(Vector3(-spring_len, 0, 0))
+		armature.set_bone_global_pose_override(ray.offset_bone_id, 
+			armature.global_transform.affine_inverse() * bone, 1.0, false)
 		
 		var spring_force := ray.spring_strength * offset
 		
@@ -72,13 +77,17 @@ func _do_single_wheel_suspension(ray: RaycastWheel) -> void:
 func _do_single_wheel_acceleration(ray: RaycastWheel, delta: float) -> void:
 	var forward_dir := ray.global_basis.x
 	var velocity := forward_dir.dot(linear_velocity) #MOVE OUTSIDE AND CHACHE
-	ray.wheel_mesh.rotate_z((-velocity * delta) / ray.wheel_radius)
+	
+	#ray.wheel_mesh.rotate_z((-velocity * delta) / ray.wheel_radius)
+	 #OMG the FPS!
+	var bone : Transform3D = armature.global_transform * armature.get_bone_global_pose(ray.rotation_bone_id)
+	bone = bone.rotated_local(bone.basis.z, ((-velocity * delta) / ray.wheel_radius))
 	#velocity = abs(velocity)
 	
 	if ray.is_colliding():
-		var contact := ray.wheel_mesh.global_position
+		var contact := ray.wheel_position.global_position
 		
-		contact = ray.wheel_mesh.global_position
+		contact = ray.wheel_position.global_position
 		var force_pos := contact - global_position
 		
 		if ray.is_motor and forward_backward != 0:
@@ -92,7 +101,7 @@ func  _do_single_wheel_traction(ray : RaycastWheel, delta : float) -> void:
 	if not ray.is_colliding():
 		return
 	var steer_side_dir := ray.global_basis.z
-	var tire_vel := _get_point_velocity(ray.wheel_mesh.global_position)
+	var tire_vel := _get_point_velocity(ray.wheel_position.global_position)
 	var steering_z_vel := steer_side_dir.dot(tire_vel)
 	var z_traction := 1.0
 	
@@ -101,10 +110,10 @@ func  _do_single_wheel_traction(ray : RaycastWheel, delta : float) -> void:
 	var z_force : Vector3 = (-steer_side_dir * steering_z_vel * #how do i breakline?
 		z_traction * (mass*gravity/wheels.size())) #cache this
 	
-	var force_pos := ray.wheel_mesh.global_position - global_position
+	var force_pos := ray.wheel_position.global_position - global_position
 	
 	apply_force(z_force, force_pos)
-	DebugDraw3D.draw_arrow(ray.wheel_mesh.global_position, ray.wheel_mesh.global_position
+	DebugDraw3D.draw_arrow(ray.wheel_position.global_position, ray.wheel_position.global_position
 		 + z_force/mass, Color.YELLOW, 0.25)
 
 func _simple_wheel_rotation(delta : float) -> void:

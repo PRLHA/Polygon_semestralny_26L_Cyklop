@@ -1,0 +1,5 @@
+[gd_scene format=3 uid="uid://4581mt2aso3a"]
+
+[ext_resource type="PackedScene" uid="uid://ctwpfldgpeiay" path="res://models_3d/Wheeled_Chassis/wheel_chassis.glb" id="1_u1tu0"]
+
+[node name="wheel_chassis" unique_id=1071680882 instance=ExtResource("1_u1tu0")]
