@@ -2,17 +2,19 @@ extends RigidBody3D
 
 @export var wheels: Array[RaycastWheel]
 @export var acceleration : float = 600.0
-@export var deceleration : float = 200.0
 @export var max_speed : float = 20.0
 
 @export var acceleration_curve : Curve
 
 @export var center_of_mass_offset_during_airtime : float = 0.5
+@export var tire_trurn_speed : float = 2.0
+@export var tire_max_turn_degrees : float = 25.0
 
 var forward_backward : float = 0.0
 var left_right : float = 0.0
 
 func _physics_process(delta: float) -> void:
+	_simple_wheel_rotation(delta)
 	var grounded := false
 	for wheel in wheels:
 		wheel.force_raycast_update()
@@ -20,9 +22,12 @@ func _physics_process(delta: float) -> void:
 			grounded = true
 		_do_single_wheel_suspension(wheel)
 		_do_single_wheel_acceleration(wheel, delta)
+		_do_single_wheel_traction(wheel, delta)
 	
 	if grounded:
-		center_of_mass = Vector3.ZERO
+		center_of_mass = Vector3.ZERO + Vector3.DOWN*1
+		#center_of_mass_mode = RigidBody3D.CENTER_OF_MASS_MODE_CUSTOM
+		#center_of_mass = Vector3.DOWN * center_of_mass_offset_during_airtime
 	else:
 		center_of_mass_mode = RigidBody3D.CENTER_OF_MASS_MODE_CUSTOM
 		center_of_mass = Vector3.DOWN * center_of_mass_offset_during_airtime
@@ -82,10 +87,33 @@ func _do_single_wheel_acceleration(ray: RaycastWheel, delta: float) -> void:
 			var force_vector := forward_dir * acceleration * acceleration_percentage * forward_backward
 			apply_force(force_vector, force_pos)
 			DebugDraw3D.draw_arrow(contact, contact + force_vector/mass, Color.RED, 0.25)
-		elif abs(velocity) > 0.05 and forward_backward == 0:
-			var drag_force_vector = -global_basis.x * deceleration * signf(velocity)
-			apply_force(drag_force_vector, force_pos)
-			DebugDraw3D.draw_arrow(contact, contact + drag_force_vector/mass, Color.YELLOW, 0.25)
 
-			
-		
+func  _do_single_wheel_traction(ray : RaycastWheel, delta : float) -> void:
+	if not ray.is_colliding():
+		return
+	var steer_side_dir := ray.global_basis.z
+	var tire_vel := _get_point_velocity(ray.wheel_mesh.global_position)
+	var steering_z_vel := steer_side_dir.dot(tire_vel)
+	var z_traction := 1.0
+	
+	var gravity : float = ProjectSettings.get_setting("physics/3d/default_gravity") #cache this
+	
+	var z_force : Vector3 = (-steer_side_dir * steering_z_vel * #how do i breakline?
+		z_traction * (mass*gravity/wheels.size())) #cache this
+	
+	var force_pos := ray.wheel_mesh.global_position - global_position
+	
+	apply_force(z_force, force_pos)
+	DebugDraw3D.draw_arrow(ray.wheel_mesh.global_position, ray.wheel_mesh.global_position
+		 + z_force/mass, Color.YELLOW, 0.25)
+
+func _simple_wheel_rotation(delta : float) -> void:
+	
+	if left_right:
+		$WheelFL.rotation.y = clampf($WheelFL.rotation.y + left_right*tire_trurn_speed * delta, 
+			deg_to_rad(-tire_max_turn_degrees), deg_to_rad(tire_max_turn_degrees))
+		$WheelFR.rotation.y = clampf($WheelFR.rotation.y + left_right*tire_trurn_speed * delta, 
+			deg_to_rad(-tire_max_turn_degrees), deg_to_rad(tire_max_turn_degrees))
+	else:
+		$WheelFL.rotation.y = move_toward($WheelFL.rotation.y, 0, tire_trurn_speed * delta)
+		$WheelFR.rotation.y = move_toward($WheelFR.rotation.y, 0, tire_trurn_speed * delta)
