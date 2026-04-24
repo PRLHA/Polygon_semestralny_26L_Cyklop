@@ -1,7 +1,7 @@
 extends RigidBody3D
 
 @export var wheels: Array[RaycastWheel]
-@onready var armature = $wheel_chassis/Armature/Skeleton3D
+@onready var armature: Skeleton3D = $wheel_chassis/Armature/Skeleton3D
 @export var acceleration : float = 600.0
 @export var max_speed : float = 20.0
 
@@ -17,6 +17,7 @@ var left_right : float = 0.0
 func _physics_process(delta: float) -> void:
 	_simple_wheel_rotation(delta)
 	var grounded := false
+	#armature.clear_bones_global_pose_override()
 	for wheel in wheels:
 		wheel.force_raycast_update()
 		if wheel.is_colliding():
@@ -55,11 +56,19 @@ func _do_single_wheel_suspension(ray: RaycastWheel) -> void:
 		
 		var offset := ray.rest_distance - spring_len
 		
+		#Poprzednia wersja
 		ray.wheel_position.position.y = -spring_len
-		var bone : Transform3D = armature.global_transform * armature.get_bone_global_pose(ray.offset_bone_id)
-		bone = bone.translated_local(Vector3(-spring_len, 0, 0))
-		armature.set_bone_global_pose_override(ray.offset_bone_id, 
-			armature.global_transform.affine_inverse() * bone, 1.0, false)
+		
+		#Aktualna wersja
+		#var bone : Transform3D = armature.global_transform * armature.get_bone_global_pose(ray.offset_bone_id)
+		#bone = bone.translated_local(Vector3(-spring_len, 0, 0))
+		#var bone := armature.get_bone_pose(ray.offset_bone_id)
+		var bone := armature.get_bone_pose_position(ray.offset_bone_id)
+		bone = armature.to_local(ray.wheel_position.global_position)#spring_len
+		armature.set_bone_pose_position(ray.offset_bone_id, bone)
+		#armature.set_bone_pose_position(ray.offset_bone_id, Vector3(0, -spring_len/1000, 0))
+		#armature.set_bone_global_pose_override(ray.offset_bone_id, 
+		#	armature.global_transform.affine_inverse() * bone, 1.0, true)
 		
 		var spring_force := ray.spring_strength * offset
 		
@@ -71,7 +80,6 @@ func _do_single_wheel_suspension(ray: RaycastWheel) -> void:
 		
 		var force_point_offset := contact - global_position
 		apply_force(spring_vector, force_point_offset)
-		
 		DebugDraw3D.draw_arrow(contact, contact + spring_vector/mass, Color.LIME, 0.05)
 
 func _do_single_wheel_acceleration(ray: RaycastWheel, delta: float) -> void:
@@ -80,8 +88,14 @@ func _do_single_wheel_acceleration(ray: RaycastWheel, delta: float) -> void:
 	
 	#ray.wheel_mesh.rotate_z((-velocity * delta) / ray.wheel_radius)
 	 #OMG the FPS!
-	var bone : Transform3D = armature.global_transform * armature.get_bone_global_pose(ray.rotation_bone_id)
-	bone = bone.rotated_local(bone.basis.z, ((-velocity * delta) / ray.wheel_radius))
+	#var bone : Transform3D = armature.global_transform * armature.get_bone_global_pose(ray.rotation_bone_id)
+	#bone = bone.rotated_local(bone.basis.z, ((-velocity * delta) / ray.wheel_radius))
+	var bone := armature.get_bone_pose_rotation(ray.rotation_bone_id)
+	if ray.is_left_side:
+		bone = bone * Quaternion(Vector3(0, -1, 0), ((-velocity * delta) / ray.wheel_radius))
+	else:
+		bone = bone * Quaternion(Vector3(0, 1, 0), ((-velocity * delta) / ray.wheel_radius))
+	armature.set_bone_pose_rotation(ray.rotation_bone_id, bone)
 	#velocity = abs(velocity)
 	
 	if ray.is_colliding():
@@ -126,3 +140,18 @@ func _simple_wheel_rotation(delta : float) -> void:
 	else:
 		$WheelFL.rotation.y = move_toward($WheelFL.rotation.y, 0, tire_trurn_speed * delta)
 		$WheelFR.rotation.y = move_toward($WheelFR.rotation.y, 0, tire_trurn_speed * delta)
+	
+	var rotate_bone_fl : RaycastWheel = $WheelFL
+	var rotate_bone_fr : RaycastWheel = $WheelFR
+	
+	var bone := armature.get_bone_pose_rotation(rotate_bone_fl.offset_bone_id)
+	bone = (rotate_bone_fr.quaternion *Quaternion(Vector3(-1, 0, 0).normalized(), deg_to_rad(90)) *
+		Quaternion(Vector3(0, 0, -1).normalized(), deg_to_rad(90)))
+	armature.set_bone_pose_rotation(rotate_bone_fl.offset_bone_id, bone)
+	
+	bone = armature.get_bone_pose_rotation(rotate_bone_fr.offset_bone_id)
+	bone = (rotate_bone_fr.quaternion * Quaternion(Vector3(1, -1, 1).normalized(), deg_to_rad(120)))
+	#Quaternion(0.5, -0.5, 0.5, 0.5))
+	#Quaternion(Vector3(-1, 0, 0).normalized(), deg_to_rad(90)) *
+	#	Quaternion(Vector3(0, 0, 1).normalized(), deg_to_rad(90)))
+	armature.set_bone_pose_rotation(rotate_bone_fr.offset_bone_id, bone)

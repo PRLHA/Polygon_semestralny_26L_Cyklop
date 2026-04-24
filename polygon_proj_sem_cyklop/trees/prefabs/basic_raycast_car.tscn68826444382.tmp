@@ -82,13 +82,11 @@ rest_distance = 0.75
 over_extend = 0.2
 wheel_radius = 0.68
 is_motor = true
-is_left_side = true
 offset_bone_id = 1
 rotation_bone_id = 2
 
 [node name="WheelMesh" type="MeshInstance3D" parent="WheelBL" unique_id=1047108512]
 transform = Transform3D(-1, -8.667159e-07, 6.600236e-15, 0, -2.5090335e-07, -1, 1.509958e-07, -5.74, 4.371139e-08, 0, -0.5, 0)
-visible = false
 mesh = SubResource("CylinderMesh_b1ifb")
 
 [node name="WheelFL" type="RayCast3D" parent="." unique_id=1219873344]
@@ -101,13 +99,11 @@ rest_distance = 0.75
 over_extend = 0.2
 wheel_radius = 0.68
 is_motor = true
-is_left_side = true
 offset_bone_id = 3
 rotation_bone_id = 4
 
 [node name="WheelMesh" type="MeshInstance3D" parent="WheelFL" unique_id=1235503591]
 transform = Transform3D(-1, -8.667159e-07, 6.600236e-15, 0, -2.5090335e-07, -1, 1.509958e-07, -5.74, 4.371139e-08, 0, -0.5, 0)
-visible = false
 mesh = SubResource("CylinderMesh_b1ifb")
 skeleton = NodePath("../../WheelBL")
 
@@ -126,7 +122,6 @@ rotation_bone_id = 6
 
 [node name="WheelMesh" type="MeshInstance3D" parent="WheelBR" unique_id=1740775647]
 transform = Transform3D(1, 1.0036159e-06, -7.642761e-15, 0, -2.5090335e-07, -1, -1.74846e-07, 5.74, -4.371139e-08, 0, -0.5, 0)
-visible = false
 mesh = SubResource("CylinderMesh_b1ifb")
 skeleton = NodePath("../../WheelBL")
 

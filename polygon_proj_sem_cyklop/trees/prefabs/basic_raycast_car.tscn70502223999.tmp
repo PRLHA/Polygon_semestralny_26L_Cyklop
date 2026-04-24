@@ -56,7 +56,11 @@ mass = 500.0
 script = ExtResource("1_e62bf")
 wheels = [NodePath("WheelBL"), NodePath("WheelFL"), NodePath("WheelBR"), NodePath("WheelFR")]
 acceleration = 1000.0
+max_speed = null
 acceleration_curve = SubResource("Curve_tw3na")
+center_of_mass_offset_during_airtime = null
+tire_trurn_speed = null
+tire_max_turn_degrees = null
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=89707067]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2, 0)
@@ -82,7 +86,6 @@ rest_distance = 0.75
 over_extend = 0.2
 wheel_radius = 0.68
 is_motor = true
-is_left_side = true
 offset_bone_id = 1
 rotation_bone_id = 2
 
@@ -101,7 +104,6 @@ rest_distance = 0.75
 over_extend = 0.2
 wheel_radius = 0.68
 is_motor = true
-is_left_side = true
 offset_bone_id = 3
 rotation_bone_id = 4
 
