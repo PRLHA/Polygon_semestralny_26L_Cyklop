@@ -14,7 +14,6 @@
 [ext_resource type="ArrayMesh" uid="uid://5o1c8peyav57" path="res://models_3d/Flash/Flash_Cylinder.res" id="12_wu26x"]
 [ext_resource type="Texture2D" uid="uid://b2wr81t5k23kw" path="res://sprites/Particle_sprites/muzzle_05.png" id="13_j02hg"]
 [ext_resource type="ArrayMesh" uid="uid://ddmql0bcfrfhc" path="res://models_3d/Particles/muzzleflash_cone.obj" id="14_1kqf6"]
-[ext_resource type="AudioStream" uid="uid://btckxh4v18lgv" path="res://sound_fx/universfield-powerful-cannon-shot-352459.mp3" id="15_1kqf6"]
 
 [sub_resource type="Curve" id="Curve_tw3na"]
 _data = [Vector2(0, 0.6), 0.0, 0.0, 0, 0, Vector2(0.3, 0.90000004), 0.0, 0.0, 0, 0, Vector2(0.7, 0.8), 0.0, 0.0, 0, 0, Vector2(1, 0.1), 0.0, 0.0, 0, 0]
@@ -339,7 +338,6 @@ one_shot = true
 explosiveness = 1.0
 randomness = 1.0
 fixed_fps = 60
-local_coords = true
 process_material = SubResource("ParticleProcessMaterial_xrxnm")
 draw_pass_1 = SubResource("ArrayMesh_j02hg")
 
@@ -353,15 +351,10 @@ one_shot = true
 explosiveness = 1.0
 randomness = 1.0
 fixed_fps = 60
-local_coords = true
 process_material = SubResource("ParticleProcessMaterial_7s05h")
 draw_pass_1 = ExtResource("14_1kqf6")
 
 [node name="Reload" type="Timer" parent="Attachment/BasicTurret" unique_id=205792667]
 one_shot = true
-
-[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="Attachment/BasicTurret" unique_id=631985865]
-stream = ExtResource("15_1kqf6")
-pitch_scale = 3.0
 
 [connection signal="timeout" from="Attachment/BasicTurret/AxisY/AxisZ/Recoil/MuzzleFlsah" to="Attachment/BasicTurret" method="_on_muzzle_flsah_timeout"]

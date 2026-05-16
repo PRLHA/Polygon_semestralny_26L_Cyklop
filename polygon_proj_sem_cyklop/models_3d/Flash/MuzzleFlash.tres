@@ -1,0 +1,12 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://doyu5vinsc0nf"]
+
+[ext_resource type="Texture2D" uid="uid://52xv6mvov5pn" path="res://models_3d/Flash/Flash_fire.jpg" id="1_qf7ln"]
+
+[resource]
+resource_name = "MuzzleFlash"
+blend_mode = 1
+cull_mode = 2
+shading_mode = 0
+diffuse_mode = 3
+specular_mode = 1
+albedo_texture = ExtResource("1_qf7ln")
