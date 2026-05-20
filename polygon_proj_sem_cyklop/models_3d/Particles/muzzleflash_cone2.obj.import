@@ -1,0 +1,25 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://drvtsof1c17io"
+path="res://.godot/imported/muzzleflash_cone2.obj-24ccaa6c5d30cf4e494187ca5461b5be.mesh"
+
+[deps]
+
+files=["res://.godot/imported/muzzleflash_cone2.obj-24ccaa6c5d30cf4e494187ca5461b5be.mesh"]
+
+source_file="res://models_3d/Particles/muzzleflash_cone2.obj"
+dest_files=["res://.godot/imported/muzzleflash_cone2.obj-24ccaa6c5d30cf4e494187ca5461b5be.mesh", "res://.godot/imported/muzzleflash_cone2.obj-24ccaa6c5d30cf4e494187ca5461b5be.mesh"]
+
+[params]
+
+generate_tangents=true
+generate_lods=true
+generate_shadow_mesh=true
+generate_lightmap_uv2=false
+generate_lightmap_uv2_texel_size=0.2
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+force_disable_mesh_compression=false
